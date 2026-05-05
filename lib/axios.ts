@@ -1,16 +1,21 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://khanwebbackend.vercel.app/api',
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://khanwebbackend.vercel.app/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 // Function to get token from localStorage
+const parseCookieValue = (name: string) => {
+  if (typeof window === 'undefined') return null;
+  return document.cookie.split('; ').find((cookie) => cookie.startsWith(`${name}=`))?.split('=')[1] || null;
+};
+
 const getToken = () => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('adminToken');
+    return localStorage.getItem('adminToken') || parseCookieValue('adminToken');
   }
   return process.env.NEXT_PUBLIC_TECH_EXA_ADMIN_TOKEN;
 };

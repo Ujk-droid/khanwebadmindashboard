@@ -27,6 +27,9 @@ export default function LoginPage() {
         const token = response.data.data?.token || response.data.token;
         if (token) {
           localStorage.setItem('adminToken', token);
+          if (typeof window !== 'undefined') {
+            document.cookie = `adminToken=${token}; path=/; secure; samesite=None;`;
+          }
         }
         router.push('/');
       }

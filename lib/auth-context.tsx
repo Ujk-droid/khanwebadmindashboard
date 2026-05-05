@@ -16,8 +16,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const getTokenFromCookie = () => {
+    if (typeof window === 'undefined') return null;
+    return document.cookie.split('; ').find((cookie) => cookie.startsWith('adminToken='))?.split('=')[1] || null;
+  };
+
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('adminToken') || getTokenFromCookie();
     if (token) {
       setIsAuthenticated(true);
     }
@@ -26,6 +31,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('adminToken');
+    if (typeof window !== 'undefined') {
+      document.cookie = 'adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=None;';
+    }
     setIsAuthenticated(false);
     router.push('/login');
   };

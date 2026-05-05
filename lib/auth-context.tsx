@@ -32,7 +32,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     localStorage.removeItem('adminToken');
     if (typeof window !== 'undefined') {
-      document.cookie = 'adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=None;';
+      const cookieAttributes = window.location.protocol === 'https:'
+        ? '; Secure; SameSite=None'
+        : '';
+      document.cookie = `adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${cookieAttributes}`;
     }
     setIsAuthenticated(false);
     router.push('/login');
